@@ -253,8 +253,6 @@ define([
                         cancelButtonLabel: "Cancel",
                         contentString: this.htmlTemplate,
                         onCancel: function() {
-                            dijit.byId('addButton').destroy();
-                            dijit.byId('remButton').destroy();
                             dijit.byId('gridDiv').destroy();
                         },
                         createGridTable: function() {
@@ -273,39 +271,31 @@ define([
                                 items: []
                             };
                             var idVal = 0;
+                            var myNewItem;
 
+                            for (var j = 0; j < propData.items.length; j++) {
+                                    if (propData.items[j].dataType == "xs:timestamp") {
+                                        myNewItem = {
+                                            id: ++idVal,
+                                            pname: propData.items[j].id,
+                                            sname: propData.items[j].symbolicName,
+                                            dtype: propData.items[j].dataType.replace("xs:timestamp", "datetime")
+                                        };
+                                    } else {
+                                        myNewItem = {
+                                            id: ++idVal,
+                                            pname: propData.items[j].id,
+                                            sname: propData.items[j].symbolicName,
+                                            dtype: propData.items[j].dataType.replace("xs:", "")
+                                        };
+                                    }
+                                    data.items.push(myNewItem);
+                            }
+                        
                             var stateStore = new Memory({
                                 data: propData
                             });
 
-
-                            var node = dom.byId("addButton");
-                            on(node, "click", function() {
-                                var myNewItem = {
-                                    id: (++idVal),
-                                    pname: "",
-                                    sname: "",
-                                    dtype: ""
-                                };
-                                store.newItem(myNewItem);                                
-                                var lastRow = grid.store._arrayOfAllItems.length - 1;
-                                //grid.scrollToRow(lastRow);
-                                grid.scrollTo(clickCount);
-                                clickCount+=50;
-                            });
-                            
-                            var remnode = dom.byId("remButton");
-                            on(remnode, "click", function() {
-                                var items = grid.selection.getSelected();
-                                if (items.length) {
-                                        dojo.forEach(items, function(selectedItem) {
-                                            if (selectedItem != null) {
-                                                store.deleteItem(selectedItem);
-                                                store.save();
-                                            }
-                                        })
-                                }
-                            })
                             layoutProperties = [{
                                 defaultCell: {
                                     width: 5,
@@ -315,7 +305,7 @@ define([
                                 cells: [
                                     new dojox.grid.cells.RowIndex({
                                         name: "S.No",
-                                        width: '42px'
+                                        width: '40px'
                                     }),
 
                                     {
@@ -358,20 +348,20 @@ define([
                                             }
                                         },
                                         searchAttr: "id",
-                                        width: '153px',
-                                        editable: true
+                                        width: '148px',
+                                        editable: false
                                     },
                                     {
                                         field: "sname",
                                         name: "Symbolic Name",
-                                        width: '153px',
+                                        width: '148px',
                                         height: '109px',
                                         editable: false
                                     },
                                     {
                                         field: "dtype",
                                         name: "DataType",
-                                        width: '153px',
+                                        width: '148px',
                                         height: '109px',
                                         editable: false
                                     },
@@ -387,6 +377,7 @@ define([
                                 store: store,
                                 structure: layoutProperties,
                                 rowSelector: '20px',
+                                selectionMode: "multiple",
                                 rowsPerPage: 200
                             });
                             grid.placeAt("gridDiv");
@@ -418,27 +409,18 @@ define([
                             }
                         },
                         onExport: function() {
-                            var symNames = "";
+                        	var symNames = "";
                             var displayNames = [];
-                            function completed(items, request) {
-
-                                for (var i = 0; i < items.length; i++) {
-                                    if (store.getValue(items[i], "pname") && store.getValue(items[i], "sname")) {
-                                            symNames += store.getValue(items[i], "sname");
+                        	var items = grid.selection.getSelected();
+                            if (items.length) {
+                                    dojo.forEach(items, function(selectedItem) {
+                                        if (selectedItem != null) {
+                                            symNames += selectedItem.sname;
                                             symNames += ",";
-                                            displayNames.push(store.getValue(items[i],"pname"));
-                                    } else {
-                                        store.deleteItem(items[i]);
-                                    }
-                                }
+                                            displayNames.push(selectedItem.pname);
+                                        }
+                                    });
                             }
-                            store.fetch({
-                                query: {
-                                	pname: "*",
-                                    sname: "*",
-                                },
-                                onComplete: completed
-                            });
                             symNames = symNames.replace(/,\s*$/, "");
                             var symNamesArray = symNames.split(',');
                             ceQuery = ceQuery.replace("caseProperties",symNames);
@@ -487,8 +469,6 @@ define([
                                     });
                                     saveAs(blob, fileName);
                                     initiateTaskDialog1.destroy();
-                                    dijit.byId('addButton').destroy();
-                                    dijit.byId('remButton').destroy();
                                     dijit.byId('gridDiv').destroy();
                                 }
                             }), sortBy, sortAsc, null, function(error) {
@@ -507,20 +487,14 @@ define([
 
                 },
                 buildHtmlTemplate1: function() {
-                    var htmlstring1 = '<div><div data-dojo-type="dijit/layout/TabContainer" style="width: 571px; height: 310px;">' +
-                        '<div style="width: 571px; height: 310px;" id="gridDiv" data-dojo-type="dijit/layout/ContentPane" title="Properties" ></div>' +
-                        '</div>' +
-                        '<div class="pvrPropertyTable" id="toolBar1"><div class="pvrPropertyTableGrid" data-dojo-attach-point="_gridNode"></div>' +
-                        '<div class="pvrPropertyTableToolbar pvrGridToolbar" data-dojo-type="dijit/Toolbar"  data-dojo-attach-point="_toolbar">' +
-                        '<div data-dojo-type="dijit/form/Button" data-dojo-attach-point="_addButton" id="addButton"' +
-                        'data-dojo-props="iconClass:\'addButton\', showLabel:false">add</div>' +
-                        '<div data-dojo-type="dijit/form/Button" data-dojo-attach-point="_removeButton" id="remButton"' +
-                        'data-dojo-props="iconClass:\'removeButton\', showLabel:false">remove</div></div></div></div>';
+                    var htmlstring1 = '<div><div data-dojo-type="dijit/layout/TabContainer" style="width: 571px; height: 360px;">' +
+                        '<div style="width: 571px; height: 360px;" id="gridDiv" data-dojo-type="dijit/layout/ContentPane" title="Properties" ></div>' +
+                        '</div></div>';
                     return htmlstring1;
                 }
 
             });
-            initiateTaskDialog.setTitle("Case Type and System Property");
+            initiateTaskDialog.setTitle("Case Type and Search Criteria");
             initiateTaskDialog.createGrid();
             initiateTaskDialog.setSize(500, 500);
             initiateTaskDialog.addButton("Next <span style='font-size:25px;position: absolute;left: 295px;bottom: 24px;'>&#8594;</span>", initiateTaskDialog.onExecute, false, false);

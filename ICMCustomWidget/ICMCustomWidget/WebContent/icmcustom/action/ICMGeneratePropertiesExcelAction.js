@@ -363,7 +363,7 @@ define([
                                         },
                                         searchAttr: "id",
                                         width: '132px',
-                                        editable: true
+                                        editable: false
                                     },
                                     {
                                         field: "sname",
