@@ -75,13 +75,6 @@ public class ICMSearchExportAction extends PluginAction {
 				"                    \"type\": \"string\",\r\n" +
 				"                    \"isLocalized\":false\r\n" +
 				"                },\r\n" +
-				"                {\r\n" +
-				"                    \"id\": \"searchQuery\",\r\n" +
-				"                    \"title\": \"Enter Search Query\",\r\n" +
-				"                    \"defaultValue\": \"\",\r\n" +
-				"                    \"type\": \"string\",\r\n" +
-				"                    \"isLocalized\":false\r\n" +
-				"                },\r\n" +
 				"            ],\r\n" +
 				"            \"events\":[]" +
 				"	}";
