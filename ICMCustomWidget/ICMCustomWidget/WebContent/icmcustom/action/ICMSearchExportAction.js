@@ -217,9 +217,11 @@ define([
                                     	}
                                         if (sysPropData.items[z].dataType == "xs:timestamp") {
                                             isDateField = true;
+                                            isChoicelistField = false;
                                             break;
                                         } else {
                                             isDateField = false;
+                                            isChoicelistField = false;
                                             break;
                                         }
                                     }
