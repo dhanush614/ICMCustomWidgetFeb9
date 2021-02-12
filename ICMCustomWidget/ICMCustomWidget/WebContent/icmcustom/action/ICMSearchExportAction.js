@@ -195,6 +195,7 @@ define([
                                     if (sysPropData.items[z].name == value) {
                                     	if(sysPropData.items[z].choiceList != null){
                                     		isChoicelistField = true;
+                                    		isDateField = false;
                                     		choices = sysPropData.items[z].choiceList.choices;
                                     		var choiceData = {
                                     				items:[]
