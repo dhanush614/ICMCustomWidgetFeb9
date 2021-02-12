@@ -310,7 +310,7 @@ define([
                             layoutProperties = [{
                                 defaultCell: {
                                     width: 5,
-                                    editable: false,
+                                    editable: true,
                                     type: cells._Widget
                                 },
                                 cells: [
