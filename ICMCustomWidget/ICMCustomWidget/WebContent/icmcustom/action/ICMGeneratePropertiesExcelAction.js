@@ -310,7 +310,7 @@ define([
                             layoutProperties = [{
                                 defaultCell: {
                                     width: 5,
-                                    editable: true,
+                                    editable: false,
                                     type: cells._Widget
                                 },
                                 cells: [
@@ -363,7 +363,7 @@ define([
                                         },
                                         searchAttr: "id",
                                         width: '132px',
-                                        editable: false
+                                        editable: true
                                     },
                                     {
                                         field: "sname",
