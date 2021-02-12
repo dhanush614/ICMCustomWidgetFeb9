@@ -539,14 +539,25 @@ define([
                                     var sr = [];
                                     for (var i = 0; i < searchResults.length; i++) {
                                         var caseData = JSON.stringify(searchResults[i].attributes);
+                                        var caseTypesData = JSON.stringify(searchResults[i].attributeTypes);
                                         var jsonData = JSON.parse(caseData);
+                                        var caseTypejson = JSON.parse(caseTypesData);
                                         if ("DateLastModified" in jsonData) {
                                             delete jsonData['DateLastModified'];
                                         }
                                         for (var l = 0; l < symNamesArray.length; l++) {
-                                            var val = jsonData[symNamesArray[l]];
-                                            jsonData[displayNames[l]] = val;
-                                            delete jsonData[symNamesArray[l]];
+                                            if(caseTypejson[symNamesArray[l]]=="xs:timestamp"){
+                                                var val = jsonData[symNamesArray[l]];
+                                                if(val!=null){
+                                                	val = new Date(val);
+                                                }
+	                                            jsonData[displayNames[l]] = val;
+	                                            delete jsonData[symNamesArray[l]];
+                                            }else{
+                                                var val = jsonData[symNamesArray[l]];
+	                                            jsonData[displayNames[l]] = val;
+	                                            delete jsonData[symNamesArray[l]];
+                                            }
                                         }
                                         sr.push(jsonData);
                                     }
